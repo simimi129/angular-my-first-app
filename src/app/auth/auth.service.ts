@@ -1,7 +1,8 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { Subject, throwError } from 'rxjs';
+import { User } from './user.model';
 
 export interface AuthResponseData {
   kind: string;
@@ -14,7 +15,9 @@ export interface AuthResponseData {
 }
 
 @Injectable({ providedIn: 'root' })
-export class authService {
+export class AuthService {
+  user = new Subject<User>();
+
   constructor(private http: HttpClient) {}
 
   signup(email: string, password: string) {
@@ -27,7 +30,17 @@ export class authService {
           returnSecureToken: true,
         }
       )
-      .pipe(catchError(this.handleError));
+      .pipe(
+        catchError(this.handleError),
+        tap((resData) => {
+          this.handleAuth(
+            resData.email,
+            resData.localId,
+            resData.idToken,
+            +resData.expiresIn
+          );
+        })
+      );
   }
 
   login(email: string, password: string) {
@@ -36,7 +49,28 @@ export class authService {
         'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBppDlC9E4-cPqmTsvC1MjEHLoA5pOa1pw',
         { email: email, password: password, returnSecureToken: true }
       )
-      .pipe(catchError(this.handleError));
+      .pipe(
+        catchError(this.handleError),
+        tap((resData) => {
+          this.handleAuth(
+            resData.email,
+            resData.localId,
+            resData.idToken,
+            +resData.expiresIn
+          );
+        })
+      );
+  }
+
+  private handleAuth(
+    email: string,
+    userId: string,
+    token: string,
+    expiresIn: number
+  ) {
+    const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
+    const user = new User(email, userId, token, expirationDate);
+    this.user.next(user);
   }
 
   private handleError(errorRes: HttpErrorResponse) {

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { AuthResponseData, authService } from './auth.service';
+import { AuthResponseData, AuthService } from './auth.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -12,7 +12,7 @@ export class AuthComponent {
   isLoading: boolean = false;
   error: string = null;
 
-  constructor(private authService: authService) {}
+  constructor(private authService: AuthService) {}
 
   onSwitchMode() {
     this.isLoginMode = !this.isLoginMode;
