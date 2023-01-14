@@ -18,6 +18,7 @@ import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component
 import { RecipeService } from './recipes/recipe.service';
 import { DataService } from './shared/data.service';
 import { ResolverService } from './recipes/resolver.service';
+import { AuthComponent } from './auth/auth.component';
 
 @NgModule({
   declarations: [
@@ -32,12 +33,13 @@ import { ResolverService } from './recipes/resolver.service';
     ShoppingListComponent,
     ShoppingEditComponent,
     DropdownDirective,
+    AuthComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    AppRoutingModule,
     ReactiveFormsModule,
+    AppRoutingModule,
     HttpClientModule,
   ],
   providers: [ShoppingListService, RecipeService, DataService, ResolverService],
