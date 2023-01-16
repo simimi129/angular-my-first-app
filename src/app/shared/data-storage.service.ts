@@ -1,12 +1,13 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { RecipeService } from '../recipes/recipe.service';
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { map, tap, take, exhaustMap } from 'rxjs/operators';
+
 import { Recipe } from '../recipes/recipe.model';
-import { exhaustMap, map, take, tap } from 'rxjs';
+import { RecipeService } from '../recipes/recipe.service';
 import { AuthService } from '../auth/auth.service';
 
-@Injectable()
-export class DataService {
+@Injectable({ providedIn: 'root' })
+export class DataStorageService {
   constructor(
     private http: HttpClient,
     private recipeService: RecipeService,
@@ -15,7 +16,7 @@ export class DataService {
 
   storeRecipes() {
     const recipes = this.recipeService.getRecipes();
-    return this.http
+    this.http
       .put(
         'https://ng-recipe-4bdd7-default-rtdb.europe-west1.firebasedatabase.app/recipes.json',
         recipes
